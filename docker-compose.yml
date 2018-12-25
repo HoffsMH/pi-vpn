@@ -1,0 +1,5 @@
+version: '3'
+services:
+  web:
+    image: hoffsmh/pi-vpn
+    build: .
