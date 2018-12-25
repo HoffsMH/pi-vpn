@@ -9,8 +9,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/reposi
 
 COPY --from=kylemanna/openvpn /usr/local/bin /usr/local/bin
 
-COPY init /opt/openvpn
-
 # Needed by scripts
 ENV OPENVPN /etc/openvpn
 ENV EASYRSA /usr/share/easy-rsa
