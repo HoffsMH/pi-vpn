@@ -28,7 +28,18 @@ resource "digitalocean_droplet" "pi-vpn" {
 
   provisioner "file" {
     source      = "./scripts"
-    destination = "/opt/infra/"
+    destination = "/opt/infra/scripts"
+
+    connection {
+      type        = "ssh"
+      user        = "root"
+      private_key = "${file("./ssh/id_rsa")}"
+    }
+  }
+
+  provisioner "file" {
+    source      = "./init"
+    destination = "/opt/infra/init"
 
     connection {
       type        = "ssh"
@@ -39,7 +50,7 @@ resource "digitalocean_droplet" "pi-vpn" {
 
   provisioner "file" {
     source      = "./pki"
-    destination = "/opt/pki/"
+    destination = "/opt/infra/pki/"
 
     connection {
       type        = "ssh"
@@ -50,7 +61,8 @@ resource "digitalocean_droplet" "pi-vpn" {
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /opt/infra/*",
+      "chmod +x /opt/infra/scripts/*",
+      "chmod +x /opt/infra/init/*",
       "/opt/infra/install_docker.sh",
     ]
 
