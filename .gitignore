@@ -1,5 +1,3 @@
 secret.yml
-.semaphore/secrets
 **/.terraform/**
-terraform/secrets/**
-terraform/secrets/**
+**/secrets/**
