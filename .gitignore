@@ -1,4 +1,3 @@
 secret.yml
 **/.terraform/**
-**/secrets/**
-**/private/**
+**/ssh/**
