@@ -1,7 +1,7 @@
 [Unit]
 Description=infra scheduling
-After=network.target docker.socket
-Requires=docker.socket
+After=network.target docker.service
+Requires=docker.service
 
 [Service]
 RestartSec=10

@@ -39,12 +39,14 @@ resource "digitalocean_droplet" "pi-vpn" {
 
   provisioner "remote-exec" {
     inline = [
+      "chmod +x /opt/infra/provisioning/*",
+
       # provisioning
       "/opt/infra/provisioning/install_docker.sh",
-
-      # scheduling
-      "/opt/infra/provisioning/install_scheduling.sh",
     ]
+
+    # scheduling
+    # "/opt/infra/provisioning/install_scheduling.sh",
 
     connection {
       type        = "ssh"
