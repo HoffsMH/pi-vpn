@@ -2,3 +2,4 @@ secret.yml
 **/.terraform/**
 **/ssh/**
 terraform/infra/config
+.semaphore/secrets/**
