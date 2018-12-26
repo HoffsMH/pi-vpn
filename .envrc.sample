@@ -5,3 +5,9 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_KEY=
 
 export TF_VAR_digitalocean_token=
+
+openvpn
+
+ARG $PROTOCOL
+ARG $COMMON_NAME
+ARG $PORT
