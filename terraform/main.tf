@@ -9,7 +9,7 @@ resource "digitalocean_ssh_key" "me" {
 
 resource "digitalocean_ssh_key" "terra" {
   name       = "terra"
-  public_key = "${file("./ssh/id_rsa.pub")}"
+  public_key = "${file("./infra/ssh/id_rsa.pub")}"
 }
 
 # Create a web server
@@ -27,49 +27,29 @@ resource "digitalocean_droplet" "pi-vpn" {
   ]
 
   provisioner "file" {
-    source      = "./scripts"
-    destination = "/opt/infra/scripts"
+    source      = "./infra"
+    destination = "/opt/infra"
 
     connection {
       type        = "ssh"
       user        = "root"
-      private_key = "${file("./ssh/id_rsa")}"
-    }
-  }
-
-  provisioner "file" {
-    source      = "./init"
-    destination = "/opt/infra/init"
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      private_key = "${file("./ssh/id_rsa")}"
-    }
-  }
-
-  provisioner "file" {
-    source      = "./pki"
-    destination = "/opt/infra/pki/"
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      private_key = "${file("./ssh/id_rsa")}"
+      private_key = "${file("./infra/ssh/id_rsa")}"
     }
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /opt/infra/scripts/*",
-      "chmod +x /opt/infra/init/*",
-      "/opt/infra/install_docker.sh",
+      # provisioning
+      "/opt/infra/provisioning/install_docker.sh",
+
+      # scheduling
+      "/opt/infra/provisioning/install_scheduling.sh",
     ]
 
     connection {
       type        = "ssh"
       user        = "root"
-      private_key = "${file("./ssh/id_rsa")}"
+      private_key = "${file("./infra/ssh/id_rsa")}"
     }
   }
 }
