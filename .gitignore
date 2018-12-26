@@ -1,3 +1,4 @@
 secret.yml
 **/.terraform/**
 **/ssh/**
+terraform/infra/config
