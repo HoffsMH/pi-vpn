@@ -1,5 +1,5 @@
 secret.yml
 **/.terraform/**
 **/ssh/**
-terraform/infra/config
+terraform/infra/**/pki/**
 .semaphore/secrets/**
