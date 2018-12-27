@@ -40,6 +40,7 @@ resource "digitalocean_droplet" "pi-vpn" {
   provisioner "remote-exec" {
     inline = [
       "chmod +x /opt/infra/provisioning/*",
+      "chmod +x /opt/infra/config/*.sh",
 
       # provisioning
       "/opt/infra/provisioning/install_docker.sh",
