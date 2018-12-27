@@ -44,10 +44,10 @@ resource "digitalocean_droplet" "pi-vpn" {
 
       # provisioning
       "/opt/infra/provisioning/install_docker.sh",
-    ]
 
-    # scheduling
-    # "/opt/infra/provisioning/install_scheduling.sh",
+      # scheduling
+      "/opt/infra/provisioning/install_scheduling.sh",
+    ]
 
     connection {
       type        = "ssh"

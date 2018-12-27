@@ -3,3 +3,7 @@ services:
   web:
     image: hoffsmh/pi-vpn
     build: .
+    command: /bin/bash
+    tty: true
+    volumes:
+      - "./terraform/infra/config/openvpn:/etc/openvpn"
