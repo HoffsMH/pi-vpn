@@ -6,8 +6,12 @@ export AWS_SECRET_KEY=
 
 export TF_VAR_digitalocean_token=
 
-openvpn
 
-ARG $PROTOCOL
-ARG $COMMON_NAME
-ARG $PORT
+export PROTOCOL=
+export TF_VAR_protocol=$PROTOCOL
+
+export ADDRESS=
+export TF_VAR_address=$ADDRESS
+
+export PORT=
+export TF_VAR_port=$PORT
