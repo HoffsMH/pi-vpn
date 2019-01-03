@@ -2,65 +2,50 @@ provider "digitalocean" {
   token = "${var.digitalocean_token}"
 }
 
-resource "digitalocean_ssh_key" "me" {
-  name       = "me"
-  public_key = "${file("~/.ssh/id_rsa.pub")}"
+module "main" {
+  source = "./modules/ovpn_instance"
+
+  providers = {
+    digitalocean = "digitalocean"
+  }
 }
 
-resource "digitalocean_ssh_key" "terra" {
-  name       = "terra"
-  public_key = "${file("./infra/ssh/id_rsa.pub")}"
+resource "aws_route53_record" "pi-vpn" {
+  zone_id = "Z22WS4MEE8A9X6"
+  name    = "${var.address}"
+  type    = "A"
+  ttl     = "60"
+  records = ["${module.main.ip}"]
 }
 
-resource "digitalocean_droplet" "pi-vpn" {
-  name               = "pi-vpn"
-  image              = "debian-9-x64"
-  region             = "nyc1"
-  size               = "s-1vcpu-1gb"
-  ipv6               = true
-  private_networking = true
+resource "digitalocean_firewall" "vpn" {
+  name = "openvpn-and-ssh"
 
-  ssh_keys = [
-    "${digitalocean_ssh_key.me.fingerprint}",
-    "${digitalocean_ssh_key.terra.fingerprint}",
+  droplet_ids = ["${module.main.id}"]
+
+  inbound_rule = [
+    {
+      # ssh
+      protocol         = "tcp"
+      port_range       = "22"
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    },
+    {
+      # openvpn
+      protocol         = "udp"
+      port_range       = "1194"
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    },
+    {
+      protocol         = "icmp"
+      source_addresses = ["0.0.0.0/0", "::/0"]
+    },
   ]
 
-  provisioner "file" {
-    source      = "./infra"
-    destination = "/opt/infra"
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      private_key = "${file("./infra/ssh/id_rsa")}"
-    }
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /opt/infra/provisioning/*",
-      "chmod +x /opt/infra/config/*.sh",
-
-      # provisioning
-      "/opt/infra/provisioning/install_docker.sh",
-
-      # scheduling
-      "/opt/infra/provisioning/install_scheduling.sh",
-    ]
-
-    connection {
-      type        = "ssh"
-      user        = "root"
-      private_key = "${file("./infra/ssh/id_rsa")}"
-    }
-  }
-}
-
-resource "digitalocean_floating_ip" "pi-vpn-ip" {
-  droplet_id = "${digitalocean_droplet.pi-vpn.id}"
-  region     = "${digitalocean_droplet.pi-vpn.region}"
-}
-
-output "ip" {
-  value = "${digitalocean_floating_ip.pi-vpn-ip.ip_address}"
+  outbound_rule = [
+    {
+      protocol              = "icmp"
+      destination_addresses = ["0.0.0.0/0", "::/0"]
+    },
+  ]
 }
