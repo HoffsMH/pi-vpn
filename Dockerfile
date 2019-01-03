@@ -6,6 +6,8 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing/" >> /etc/apk/reposi
   rm -rf /tmp/* /var/tmp/* /var/cache/apk/* /var/cache/distfiles/*
 
 COPY --from=kylemanna/openvpn /usr/local/bin /usr/local/bin
+COPY bin /usr/local/bin
+RUN chmod +x /usr/local/bin
 
 # Needed by scripts
 ENV OPENVPN /etc/openvpn
