@@ -44,6 +44,12 @@ resource "digitalocean_firewall" "vpn" {
 
   outbound_rule = [
     {
+      # only other machines on the vpn
+      protocol              = "tcp"
+      port_range            = "22"
+      destination_addresses = ["192.168.254.0/24"]
+    },
+    {
       protocol              = "icmp"
       destination_addresses = ["0.0.0.0/0", "::/0"]
     },
