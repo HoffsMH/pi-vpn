@@ -38,7 +38,7 @@ resource "digitalocean_droplet" "pi-vpn" {
       "chmod +x /opt/infra/config/*.sh",
 
       # provisioning
-      "/opt/infra/provisioning/install_docker.sh",
+      "/opt/infra/provisioning/install_config.sh",
 
       # scheduling
       "/opt/infra/provisioning/install_scheduling.sh",
