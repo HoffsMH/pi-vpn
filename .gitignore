@@ -2,4 +2,5 @@ secret.yml
 **/.terraform/**
 **/ssh/**
 terraform/infra/**/pki/**
+terraform/backend.tf
 .semaphore/secrets/**
