@@ -1,8 +1,0 @@
-[openvpn]
-enabled  = true
-port     = 1194
-protocol = udp
-filter   = openvpn
-logpath  = /var/log/openvpn.log
-maxretry = 3
-
