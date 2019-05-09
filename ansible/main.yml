@@ -1,0 +1,38 @@
+# http://clouds.freeideas.cz/subdom/clouds/2017/07/26/ansible-install-docker-ce/
+- name: main
+  hosts: all
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+
+  - name: copy openvpn
+    copy:
+      src: ../config/openvpn
+      dest: /etc/
+
+  - name: install docker
+    include: install-docker.yml
+
+  - name: install fail2ban
+    include: install-fail2ban.yml
+
+  - name: change sshd to not allow passwords
+    command: sed -i -e s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/ /etc/ssh/sshd_config
+
+  - name: restart sshd
+    service:
+      name:  sshd
+      state: restarted
+
+  - name: make sure systemd service file is executable
+    command: chmod +x /etc/scheduling/start_app.service
+
+  - name: install systemd service
+    command: ln -sf /etc/scheduling/start_app.service /etc/systemd/system/
+
+  - name: start scheduling
+    service:
+      name: start_app
+      state: started

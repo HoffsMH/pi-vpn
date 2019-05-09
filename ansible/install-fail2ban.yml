@@ -1,0 +1,20 @@
+- debug: msg="play_hosts={{play_hosts}}"
+- debug: msg="ansible_distribution={{ansible_distribution}}"
+
+- name: install
+  apt:
+    name: fail2ban
+    state: present
+
+- name: make sure a file exists to be appended to from inside the container
+  file: path=/var/log/openvpn.log state=touch
+
+- name: copy openvpn
+  copy:
+    src: ../config/fail2ban
+    dest: /etc/
+
+- name: restart fail2ban
+  service:
+    name:  fail2ban
+    state: restarted
