@@ -2,56 +2,31 @@ provider "digitalocean" {
   token = "${var.digitalocean_token}"
 }
 
-module "main" {
+module "instance" {
   source = "./modules/ovpn_instance"
+  name   = "${var.vpn_name}"
 
   providers = {
     digitalocean = "digitalocean"
   }
 }
 
-resource "aws_route53_record" "pi-vpn" {
-  zone_id = "Z22WS4MEE8A9X6"
-  name    = "${var.address}"
-  type    = "A"
-  ttl     = "60"
-  records = ["${module.main.ip}"]
+module "routing" {
+  source  = "./modules/routing"
+  address = "${var.vpn_address}"
+  ip      = "${module.instance.ip}"
+
+  providers = {
+    digitalocean = "digitalocean"
+  }
 }
 
-resource "digitalocean_firewall" "vpn" {
-  name = "openvpn-and-ssh"
+module "firewall" {
+  source = "./modules/firewall"
+  name = "${var.vpn_name}"
+  droplet_id = "${module.instance.id}"
 
-  droplet_ids = ["${module.main.id}"]
-
-  inbound_rule = [
-    {
-      # ssh
-      protocol         = "tcp"
-      port_range       = "22"
-      source_addresses = ["0.0.0.0/0", "::/0"]
-    },
-    {
-      # openvpn
-      protocol         = "udp"
-      port_range       = "1194"
-      source_addresses = ["0.0.0.0/0", "::/0"]
-    },
-    {
-      protocol         = "icmp"
-      source_addresses = ["0.0.0.0/0", "::/0"]
-    },
-  ]
-
-  outbound_rule = [
-    {
-      # only other machines on the vpn
-      protocol              = "tcp"
-      port_range            = "22"
-      destination_addresses = ["192.168.254.0/24"]
-    },
-    {
-      protocol              = "icmp"
-      destination_addresses = ["0.0.0.0/0", "::/0"]
-    },
-  ]
+  providers ={
+    digitalocean = "digitalocean"
+  }
 }
