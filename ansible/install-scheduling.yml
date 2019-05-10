@@ -1,0 +1,13 @@
+- name: copy scheduling
+  copy:
+    src: ../config/scheduling
+    dest: /etc/
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: install systemd service
+  command: ln -sf /etc/scheduling/start_app.service /etc/systemd/system/
+
+- name: start scheduling
+  service:
+    name: start_app
+    state: started

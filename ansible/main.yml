@@ -6,17 +6,19 @@
   gather_facts: yes
 
   tasks:
+  - name: install docker
+    include: install-docker.yml
+
+  - name: install fail2ban
+    include: install-fail2ban.yml
 
   - name: copy openvpn
     copy:
       src: ../config/openvpn
       dest: /etc/
 
-  - name: install docker
-    include: install-docker.yml
-
-  - name: install fail2ban
-    include: install-fail2ban.yml
+  - name: install scheduling
+    include: install-scheduling.yml
 
   - name: change sshd to not allow passwords
     command: sed -i -e s/#PasswordAuthentication\ yes/PasswordAuthentication\ no/ /etc/ssh/sshd_config
@@ -25,14 +27,3 @@
     service:
       name:  sshd
       state: restarted
-
-  - name: make sure systemd service file is executable
-    command: chmod +x /etc/scheduling/start_app.service
-
-  - name: install systemd service
-    command: ln -sf /etc/scheduling/start_app.service /etc/systemd/system/
-
-  - name: start scheduling
-    service:
-      name: start_app
-      state: started
