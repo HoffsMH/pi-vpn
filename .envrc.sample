@@ -1,0 +1,29 @@
+# needed for an optional s3 backend
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_KEY=""
+
+# A valid api token for DigitalOcean that terraform will use to
+# create Digital Ocean infrastructure
+# used by
+# terraform to provision DO infra
+export TF_VAR_digitalocean_token=""
+
+
+# The full name of the docker image that will be pulled from docker hub
+# used by
+# scripts/build_image.sh to tag the image
+# scripts/push_image.sh to push the image to docker hub
+
+export IMG=""
+
+# the name of the vpn
+# used by
+# terraform to name the droplet
+export VPN_NAME=""
+export TF_VAR_vpn_name=$VPN_NAME
+
+
+# Url of the vpn without protocol
+# example my-vpn.me.com
+export VPN_ADDRESS=""
+export TF_VAR_vpn_address=$VPN_ADDRESS
