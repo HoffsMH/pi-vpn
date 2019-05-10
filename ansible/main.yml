@@ -12,7 +12,7 @@
   - name: install fail2ban
     include: install-fail2ban.yml
 
-  - name: copy openvpn
+  - name: copy openvpn config
     copy:
       src: ../config/openvpn
       dest: /etc/
