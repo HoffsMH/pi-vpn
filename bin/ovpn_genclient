@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# takes the name of a client as first argument
+# optionally 'nopass' as s second argument for there to be no password
+
 mkdir /etc/openvpn/pki/$1
 
 # build the certificate for the client
