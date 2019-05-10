@@ -1,12 +1,31 @@
 # Terraformed Open-vpn server on digital ocean!
 
-# Requirements
-- terraform
-- direnv
-- amazon aws account
-- digitial ocean account
+This was originally started as a way for me to securely connect to my raspberry pi's over the internet easily. It turned into "how much of this could I automate if I wanted to spin up many of these little vpns?". Its not at the level of a single button press yet, but I hope to get it there one day! The entire project has been redesigned to hold future-me's hand, thats why there is a nonsensical amount of shell scripts in the `scripts` folder; because given enough time (less than a couple days even) I would forget everything needed to get this up and running. built on top of the awesome docker image here! https://github.com/kylemanna/docker-openvpn 
 
-## Fill out your .envrc
+### Features:
+- all common task have been wrapped in a script!
+- ansible for config management
+- fail2ban for both ssh and vpn connections
+- network layer security via digital ocean firewall
+- routing to an aws area53 hosted domain so you can put your vpn
+  as a sub domain of your personal website!
+- systemd service so that if the node gets restarted so will the container
+- easy client generation
+
+### Requirements
+- amazon aws api key
+- digitial ocean api key
+- direnv
+- terraform
+- ansible
+
+## Lets go!
+
+### Fill out your .envrc
+```sh
+cp .envrc.sample .envrc
+```
+And fill it out. Its pretty well commented to help figure where things should go
 
 ### Setup your terraform backend
 
@@ -18,6 +37,9 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 which could look something like this
 
+```
+terraform/backend.tf
+```
 ```tf
 provider "aws" {
   region = "us-east-1"
@@ -39,71 +61,82 @@ AWS_ACCESS_KEY_ID
 AWS_SECRET_KEY
 ```
 
-a spot in .envrc exists for this exact purpose
-
+There is a spot in .envrc exists for this exact purpose
 
 ### Setup Terraform State
+
+```
 ./scripts/terraform_setup.sh
+```
 
-### build the image
+### Build the image
+
+```
 ./scripts/build_image.sh
+```
 
-### push the image
+### Push the image
+
+Make sure to be logged into dockerhub in order for this to work
+
+```
 ./scripts/push_image.sh
+```
 
-### generate open vpn config  and pki
+### Generate open vpn config  and pki
+This will place a fresh open vpn config for your domain in config/openvpn
+
+```
 ./scripts/gen_ovpn_config.sh
+```
 
-### generate your first client
+### Generate your first client
+This will put a tarball in config/openvpn/pki that can be extracted to obtain your `*.ovpn` config file. This file can be used by the
+`./scripts/connect_to_vpn.sh` script.
+
+```
 ./scripts/gen_client.sh YOUR_CLIENT_NAME
+```
 
-### create your env.sh for scheduling
 
-### provision the resources
+### Create and fill out your env.sh for scheduling
+
+Used to
+
+```
+cp config/scheduling/env.sh.sample config/scheduling/env.sh
+```
+
+### Provision the resources
+```
 ./scripts/terraform_recreate.sh
+```
 
-### run the configuration management
+### Run the configuration management
+
+Ansible needs to be installed for this!
+```
 ./scripts/run_config.sh
-
-
-### check that everything is running on the instance
-
-copy you pki
-
-deploy
-
-
-
-```
-./deploy.sh
 ```
 
-copy your personal pki to the pki  directory in terraform folder that will embed your pki in the openvpn do
+### Check that everything is running on the instance
+
+These three services are needed in the droplet in order for the vpn to work
 
 ```
-./cp_pki.sh
+./scripts/ssh_to_vpn.sh
+systemctl status docker
+systemctl status fail2ban
+systemctl status start_app
 ```
 
-## Destroy the infra
+### Connect to the vpn using your `.ovpn` config
+
+These three services are needed in the droplet in order for the vpn to work
 
 ```
-terraform destroy
+./scripts/connect_to_vpn.sh path/to/my/config.ovpn
 ```
 
-## Getting the Image into the Droplet
-
-Using scheduling like Kubernetes is overkill for a project like this
-
-By default there is a terraform provisioner that pulls a specified
-
-## Building the Docker image
-
-starting off you can build the docker image on your dev machine just make sure
-your .envrc is filled out.
-
-## Once you are up and running
-### sshing into your droplet
-### Adding clients
-### viewing clients
-### revoking clients
-### connecting
+And thats it! In the future I plan to add more automation around common tasks like revoking. Possibly putting this all in CI so
+that I don't have to bootstrap from my personal machine
