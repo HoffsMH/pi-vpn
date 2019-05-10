@@ -9,7 +9,7 @@
 - name: make sure a file exists to be appended to from inside the container
   file: path=/var/log/openvpn.log state=touch
 
-- name: copy openvpn
+- name: copy fail2ban config
   copy:
     src: ../config/fail2ban
     dest: /etc/
