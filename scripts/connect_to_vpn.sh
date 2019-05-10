@@ -1,1 +1,1 @@
-sudo openvpn --keepalive 10 60 --config YOUR_OVPN_CONFIG_HERE.ovpn
+sudo openvpn --keepalive 10 60 --config $@

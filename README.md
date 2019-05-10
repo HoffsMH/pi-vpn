@@ -6,9 +6,7 @@
 - amazon aws account
 - digitial ocean account
 
-## This Project depends heavily on direnv
-
-## Getting terraform up and running
+## Fill out your .envrc
 
 ### Setup your terraform backend
 
@@ -43,9 +41,32 @@ AWS_SECRET_KEY
 
 a spot in .envrc exists for this exact purpose
 
-### Terraform
 
-## Generate your pki
+### Setup Terraform State
+./scripts/terraform_setup.sh
+
+### build the image
+./scripts/build_image.sh
+
+### push the image
+./scripts/push_image.sh
+
+### generate open vpn config  and pki
+./scripts/gen_ovpn_config.sh
+
+### generate your first client
+./scripts/gen_client.sh YOUR_CLIENT_NAME
+
+### create your env.sh for scheduling
+
+### provision the resources
+./scripts/terraform_recreate.sh
+
+### run the configuration management
+./scripts/run_config.sh
+
+
+### check that everything is running on the instance
 
 copy you pki
 
